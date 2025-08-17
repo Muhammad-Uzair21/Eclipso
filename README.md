@@ -78,9 +78,6 @@ Now open 👉 [http://localhost:3000](http://localhost:3000)
 
 ## ✨ Screenshots
 
-*(Add images later, e.g. UI mockups or actual app screenshots)*
-
-![Dark Neon UI Preview](./public/screenshot.png)
 
 ---
 
@@ -113,6 +110,3 @@ Feel free to fork, tweak, and build upon it 🚀
 ---
 
 > 💡 *“In the dark, even the smallest light becomes powerful.”* – Eclipso  
-
-Would you like me to also design a **minimal neon-purple banner (as an image)** for the top of the README so it instantly pops when someone opens the repo?
-```
