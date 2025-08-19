@@ -11,7 +11,7 @@ export function FloatingDockDemo() {
     {
       title: "Portfolio",
       icon: (
-        <IconWorld className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <IconWorld className="h-full w-full text-[color:var(--secondary)]" />
       ),
       href: "https://hireuzair.vercel.app",
     },
@@ -19,14 +19,14 @@ export function FloatingDockDemo() {
     {
       title: "LinkedIn",
       icon: (
-        <IconBrandLinkedin className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <IconBrandLinkedin className="h-full w-full text-[color:var(--secondary)]" />
       ),
       href: "https://www.linkedin.com/in/muhammad-uzair-j21/",
     },
     {
       title: "GitHub",
       icon: (
-        <IconBrandGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+        <IconBrandGithub className="h-full w-full text-[color:var(--secondary)]" />
       ),
       href: "https://github.com/Muhammad-Uzair21",
     },
