@@ -37,12 +37,12 @@ const FloatingDockMobile = ({
 }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className={cn("fixed bottom-4 left-4 block md:hidden", className)}>
+    <div className={cn("fixed left-4 bottom-26", className)}>
       <AnimatePresence>
         {open && (
           <motion.div
             layoutId="nav"
-            className="absolute right-full mr-2 flex flex-col gap-2"
+            className="absolute bottom-full mb-2 flex flex-col gap-2"
           >
             {items.map((item, idx) => (
               <motion.div
