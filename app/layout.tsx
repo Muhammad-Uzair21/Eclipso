@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Eclipso | Modern chatbot",
   description: "Let's chat",
+  icons: {
+    icon: '/icon.svg'
+  }
 };
 
 export default function RootLayout({
