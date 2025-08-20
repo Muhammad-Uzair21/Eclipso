@@ -6,12 +6,13 @@ const Chatbot = () => {
   return (
     <div className='h-[100vh] w-full flex items-center justify-center'>
         <div className='h-full w-[70%] relative'>
-            <div className='mt-5 w-full flex flex-col gap-5 items-center'>
+            <div className='mt-5 w-full h-full flex flex-col gap-5 items-center'>
                 {/* TOP HEADING */}
                 <span><Image src='/Eclipso.svg' height={160} width={160} alt='logo'></Image></span>
                 
                 
                 {/* CHAT AREA */}
+                <textarea name="Hello" id="chat" className='w-full h-[68%] outline-none overflow-hidden text-[color:var(--secondary)] p-4 resize-none cursor-not-allowed'></textarea>
 
 
                 {/* INPUT SECTION */}
