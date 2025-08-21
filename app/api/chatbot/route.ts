@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error(error);
     return NextResponse.json({
-      response: "Failed to process request",
+      response: "Failed to proceed with your request",
     });
   }
 }
