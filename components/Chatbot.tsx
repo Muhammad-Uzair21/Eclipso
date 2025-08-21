@@ -12,7 +12,7 @@ const Chatbot = () => {
                 
                 
                 {/* CHAT AREA */}
-                <textarea name="Hello" id="chat" className='w-full h-[68%] outline-none overflow-hidden text-[color:var(--secondary)] p-4 resize-none cursor-not-allowed'></textarea>
+                <textarea name="Hello" id="chat" className='w-full h-[68%] outline-none bg-[color:var(--Charc)]/10 backdrop-blur-sm shadow-2xl rounded-2xl overflow-hidden text-[color:var(--secondary)] p-4 resize-none cursor-not-allowed'></textarea>
 
 
                 {/* INPUT SECTION */}
