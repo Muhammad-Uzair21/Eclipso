@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-=======
-
 # Eclipso
 Eclipso 🌑💜 – A sleek, dark-themed AI chatbot built with Next.js and Gemini API. Streams responses in real-time with a vibrant neon purple UI.
 
