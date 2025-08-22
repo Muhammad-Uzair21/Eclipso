@@ -64,7 +64,7 @@ GEMINI_API_KEY=your_api_key_here
 ```
 
 ### 4️⃣ Run the dev server
->>>>>>> ab1aad5b1dc04737d87a0674549fa044cc0fe3bb
+>>>>>>>
 
 ```bash
 npm run dev
@@ -80,7 +80,7 @@ Now open 👉 [http://localhost:3000](http://localhost:3000)
 
 ## ✨ Screenshots
 
-![UI ScreenShot ](/eclipsoUI.png)
+![UI ScreenShot ](./public/eclipsoUI.png)
 
 ---
 
@@ -113,4 +113,4 @@ Feel free to fork, tweak, and build upon it 🚀
 ---
 
 > 💡 *“In the dark, even the smallest light becomes powerful.”* – Eclipso  
->>>>>>> ab1aad5b1dc04737d87a0674549fa044cc0fe3bb
+>>>>>>> 
