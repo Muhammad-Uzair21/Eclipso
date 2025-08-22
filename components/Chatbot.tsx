@@ -16,14 +16,6 @@ const Chatbot = () => {
   const [input, setInput] = useState(""); // input field value
   const [loading, setLoading] = useState(false); // show loader while waiting for response
 
-  // Ref for auto-scrolling to the latest message
-  // const chatEndRef = useRef<HTMLDivElement>(null);
-
-  // Scroll down when new messages are added
-  // useEffect(() => {
-  //   chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  // }, [messages]);
-
   // Handle sending a message
   const handleChat = async () => {
     if (!input.trim()) return; // prevent empty messages
