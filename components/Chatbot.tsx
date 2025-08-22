@@ -17,12 +17,12 @@ const Chatbot = () => {
   const [loading, setLoading] = useState(false); // show loader while waiting for response
 
   // Ref for auto-scrolling to the latest message
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  // const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll down when new messages are added
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // useEffect(() => {
+  //   chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [messages]);
 
   // Handle sending a message
   const handleChat = async () => {
@@ -64,7 +64,7 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="h-screen w-full flex items-center justify-center">
+    <div className="h-screen z-10 w-full flex items-center justify-center">
       <div className="h-full w-[70%] flex flex-col">
         {/* --- TOP HEADING (Logo) --- */}
         <div className="mt-5 flex justify-center">
@@ -72,28 +72,27 @@ const Chatbot = () => {
         </div>
 
         {/* --- CHAT AREA --- */}
-        <div className="flex-1 overflow-y-auto bg-[color:var(--Charc)]/10 backdrop-blur-sm text-lg shadow-2xl rounded-2xl text-[color:var(--secondary)] p-4 my-4">
+        <div className="flex-1 w-full overflow-y-auto sm:text-lg text-sm rounded-2xl text-[color:var(--secondary)]  my-4 scrollbar-hide">
           {messages.map((m, idx) => (
             <div
               key={idx}
-              className={`mb-2 ${m.role === "user" ? "text-right" : "text-left"}`}
+              className={`mb-3 ${m.role === "user" ? "text-right" : "text-left"}`}
             >
               <span
-                className={`inline-block px-3 py-2 rounded-xl ${
+                className={`inline-block px-4 py-3 rounded-xl ${
                   m.role === "user"
-                    ? "bg-[color:var(--neon-purp)] text-[color:var(--pBlack)]"
-                    : "bg-[color:var(--Charc)] text-[color:var(--secondary)]"
+                    ? "bg-[color:var(--secondary)] text-center text-[color:var(--pBlack)]"
+                    : "bg-[color:var(--Charc)] shadow-md text-[color:var(--secondary)]"
                 }`}
               >
                 {m.content}
               </span>
             </div>
           ))}
-          <div ref={chatEndRef} /> {/* 👈 auto-scroll anchor */}
         </div>
 
         {/* --- INPUT SECTION --- */}
-        <div className="w-full bg-[color:var(--Charc)] p-3 mb-5 rounded-full shadow-2xl text-[color:var(--secondary)]">
+        <div className="w-full z-10 bg-[color:var(--Charc)] p-3 mb-5 rounded-full shadow-2xl text-[color:var(--secondary)]">
           <div className="w-[95%] mx-auto flex items-center justify-between">
             {/* Input field */}
             <input
@@ -101,7 +100,7 @@ const Chatbot = () => {
               onChange={(e) => setInput(e.target.value)}
               type="text"
               placeholder="What's on your mind?"
-              className="border-none outline-none w-[85%] sm:w-[90%] text-lg bg-transparent"
+              className="border-none outline-none w-[85%] sm:w-[90%] sm:text-lg text-sm bg-transparent"
             />
 
             {/* Send button (shows loader if waiting for response) */}
