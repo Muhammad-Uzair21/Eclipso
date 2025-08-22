@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import React from "react";
 import { FaCircle, FaPaperPlane } from "react-icons/fa";
 import Image from "next/image";

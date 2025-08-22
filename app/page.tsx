@@ -1,5 +1,4 @@
 "use client"
-import Image from "next/image";
 import Chatbot from "@/components/Chatbot";
 import { BackgroundBeamsWithCollision } from "@/components/ui/BackgroundBeams";
 import { FloatingDockDemo } from "@/components/FloatingDock";
