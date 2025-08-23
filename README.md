@@ -4,7 +4,7 @@ Eclipso 🌑💜 – A sleek, dark-themed AI chatbot built with Next.js and Gemi
 Eclipso is a **sleek, dark-themed AI chatbot** powered by the **Gemini API** and built with **Next.js + TailwindCSS**.  
 It features a **minimal 3-section layout** (header, chat area, input bar) and streams responses in real-time with a **vibrant neon purple aesthetic** ✨.  
 
-Live Demo 👉 [Coming Soon / Vercel Link]  
+Live Demo 👉 [https://eclipsoai.vercel.app/]  
 
 ## 🚀 Features
 - 🌌 **Dark + Neon Purple UI** – modern cyberpunk-inspired theme  
