@@ -34,7 +34,12 @@ const Chatbot = () => {
         body: JSON.stringify({ messages: updated }),
       });
 
-      const data = await res.json();
+      // Explicitly type the response structure
+      const data: { response: string; error?: string } = await res.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
 
       // Add assistant response to chat
       const assistantMsg: Message = {
@@ -42,11 +47,16 @@ const Chatbot = () => {
         content: data.response,
       };
       setMessages([...updated, assistantMsg]);
-    } catch (err: any) {
-      // Handle API errors gracefully
+    } catch (err: unknown) {
+      // Handle API errors safely
+      let errorMessage = "An unknown error occurred";
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+
       setMessages([
         ...updated,
-        { role: "assistant", content: "ERROR: " + err.message },
+        { role: "assistant", content: "ERROR: " + errorMessage },
       ]);
     }
 

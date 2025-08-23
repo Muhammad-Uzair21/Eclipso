@@ -4,10 +4,16 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // Initialize Google Generative AI client with API key
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 
+// Define chat message type
+type ChatMessage = {
+  role: "user" | "assistant" | "system";
+  content: string;
+};
+
 export async function POST(req: Request) {
   try {
     // --- Parse incoming request ---
-    const { messages } = await req.json();
+    const { messages }: { messages: ChatMessage[] } = await req.json();
 
     // --- System Instructions / Persona Setup ---
     const context = `
@@ -19,14 +25,14 @@ export async function POST(req: Request) {
       3. Ask clarifying or follow-up questions if the user's request is vague.
       4. Include examples or step-by-step explanations when useful.
       5. Be polite, approachable, and professional.
-      6. Only mention Muhammad Uzair if explicitly asked, otherwise focus on the user's query. Also mention tabs on their left side of the screen ( on big screens ), and on bottom left ( if on mobile screens ) they can use to navigate to Uzair's profile such as Github, Portfolio website, LinkdIn etc.
+      6. Mention about Muhammad Uzair if and only if explicitly asked, otherwise focus on the user's query and never mention anything about him. Also mention tabs on their left side of the screen ( on big screens ), and on bottom left ( if on mobile screens ) they can use to navigate to Uzair's profile such as Github, Portfolio website, LinkdIn etc.
       `;
 
     // --- Build prompt: combine context with conversation history ---
     const prompt =
       context +
       "\n\nConversation so far:\n" +
-      messages.map((m: any) => `${m.role}: ${m.content}`).join("\n");
+      messages.map((m: ChatMessage) => `${m.role}: ${m.content}`).join("\n");
 
     // --- Select Gemini model ---
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -38,10 +44,16 @@ export async function POST(req: Request) {
     // --- Return response to frontend ---
     return NextResponse.json({ response });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     // --- Error handling ---
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      );
+    }
     return NextResponse.json(
-      { error: error.message || "Failed to proceed with your request" },
+      { error: "Failed to proceed with your request" },
       { status: 500 }
     );
   }
