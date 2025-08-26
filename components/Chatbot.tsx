@@ -66,15 +66,15 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="h-screen z-10 w-full flex items-center justify-center">
-      <div className="h-full w-[70%] flex flex-col">
+    <div className="h-screen z-10 w-screen flex items-center justify-center">
+      <div className="h-full w-[80%] sm:w-[75%] flex flex-col items-center justify-center">
         {/* --- TOP HEADING (Logo) --- */}
         <div className="mt-5 flex justify-center">
           <Image src="/Eclipso.svg" height={160} width={160} alt="logo" />
         </div>
 
         {/* --- CHAT AREA --- */}
-        <div className="flex-1 w-full overflow-y-auto sm:text-lg text-sm rounded-2xl text-[color:var(--secondary)]  my-2 scrollbar-hide">
+        <div className="flex-1 w-full overflow-y-auto sm:text-lg text-sm rounded-xl text-[color:var(--secondary)] my-2 scrollbar-hide scroll-auto">
           {messages.map((m, idx) => (
             <div
               key={idx}
