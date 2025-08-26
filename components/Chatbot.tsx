@@ -74,7 +74,7 @@ const Chatbot = () => {
         </div>
 
         {/* --- CHAT AREA --- */}
-        <div className="flex-1 w-full overflow-y-auto sm:text-lg text-sm rounded-2xl text-[color:var(--secondary)]  my-4 scrollbar-hide">
+        <div className="flex-1 w-full overflow-y-auto sm:text-lg text-sm rounded-2xl text-[color:var(--secondary)]  my-2 scrollbar-hide">
           {messages.map((m, idx) => (
             <div
               key={idx}
@@ -84,7 +84,7 @@ const Chatbot = () => {
                 className={`inline-block px-4 py-3 rounded-xl ${
                   m.role === "user"
                     ? "bg-[color:var(--secondary)] text-center text-[color:var(--pBlack)]"
-                    : "bg-[color:var(--Charc)] shadow-md text-[color:var(--secondary)]"
+                    : "bg-transparent text-[color:var(--secondary)]"
                 }`}
               >
                 {m.content}
