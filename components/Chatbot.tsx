@@ -94,7 +94,13 @@ const Chatbot = () => {
         </div>
 
         {/* --- INPUT SECTION --- */}
-        <div className="w-full z-10 bg-[color:var(--Charc)] p-3 mb-5 rounded-full shadow-2xl text-[color:var(--secondary)]">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleChat();
+          }}
+          className="w-full z-10 bg-[color:var(--Charc)] p-3 mb-5 rounded-full shadow-2xl text-[color:var(--secondary)]"
+        >
           <div className="w-[95%] mx-auto flex items-center justify-between">
             {/* Input field */}
             <input
@@ -106,14 +112,15 @@ const Chatbot = () => {
             />
 
             {/* Send button (shows loader if waiting for response) */}
-            <span
-              onClick={handleChat}
+            <button
+              type="submit"
+              disabled={loading}
               className="rounded-full p-2 flex items-center justify-center hover:bg-[var(--neon-purp)] cursor-pointer text-[color:var(--neon-purp)] hover:text-[color:var(--pBlack)]"
             >
               {loading ? <FaCircle size={22} /> : <FaPaperPlane size={22} />}
-            </span>
+            </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
