@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       messages.map((m: ChatMessage) => `${m.role}: ${m.content}`).join("\n");
 
     // --- Select Gemini model ---
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // --- Generate AI response ---
     const result = await model.generateContent(prompt);
