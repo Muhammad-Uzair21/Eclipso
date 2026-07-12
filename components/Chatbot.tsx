@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { FaCircle, FaPaperPlane } from "react-icons/fa";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type Role = "user" | "assistant";
 
@@ -16,20 +18,30 @@ type ChatResponse = {
   error?: string;
 };
 
-// --- Small presentational component for a single chat bubble ---
+// --- Markdown renderer for assistant messages ---
+// The API returns Markdown (**bold**, ### headings, numbered lists), so we
+// need to actually parse it instead of dumping the raw string in a <span>.
+function MarkdownContent({ content }: { content: string }) {
+  return (
+    <div className="prose prose-invert prose-sm sm:prose-base max-w-none prose-p:my-2 prose-headings:mt-4 prose-headings:mb-2 prose-headings:font-semibold prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-strong:text-[color:var(--secondary)] prose-headings:text-[color:var(--neon-purp)]">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+    </div>
+  );
+}
+
 function MessageBubble({ role, content }: Message) {
   const isUser = role === "user";
   return (
-    <div className={`mb-3 ${isUser ? "text-right" : "text-left"}`}>
-      <span
+    <div className={`mb-3 flex ${isUser ? "justify-end" : "justify-start"}`}>
+      <div
         className={`inline-block px-4 py-3 rounded-xl max-w-[85%] ${
           isUser
             ? "bg-[color:var(--secondary)] text-center text-[color:var(--pBlack)]"
-            : "bg-transparent text-[color:var(--secondary)]"
+            : "bg-transparent text-[color:var(--secondary)] text-left"
         }`}
       >
-        {content}
-      </span>
+        {isUser ? content : <MarkdownContent content={content} />}
+      </div>
     </div>
   );
 }
@@ -39,12 +51,40 @@ const Chatbot = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Ref to the scrollable chat area so we can auto-scroll to the newest message
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  // Ref to the SCROLLABLE CONTAINER itself (not a dummy end element).
+  // We scroll this element directly via scrollTop so the browser never has
+  // a reason to move the whole page — that's what scrollIntoView was doing.
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const el = chatContainerRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [messages, loading]);
+
+  // KEY FIX: instead of relying purely on h-dvh (which recalculates on every
+  // frame of the browser's address-bar show/hide animation, causing visible
+  // jumps), we use the stable h-svh as a base and only adjust for the
+  // on-screen keyboard directly via the VisualViewport API. This is a single
+  // deliberate adjustment instead of a continuous recalculation.
+  const [keyboardInset, setKeyboardInset] = useState(0);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const handleResize = () => {
+      const inset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      setKeyboardInset(inset);
+    };
+
+    vv.addEventListener("resize", handleResize);
+    vv.addEventListener("scroll", handleResize);
+    return () => {
+      vv.removeEventListener("resize", handleResize);
+      vv.removeEventListener("scroll", handleResize);
+    };
+  }, []);
 
   const handleChat = async () => {
     const trimmed = input.trim();
@@ -63,6 +103,10 @@ const Chatbot = () => {
         body: JSON.stringify({ messages: updated }),
       });
 
+      if (!res.ok) {
+        throw new Error(`Request failed with status ${res.status}`);
+      }
+
       const data: ChatResponse = await res.json();
 
       if (data.error) {
@@ -80,35 +124,35 @@ const Chatbot = () => {
   };
 
   return (
-    // KEY FIX #1: h-dvh instead of h-screen.
-    // 100vh is a static value and does NOT shrink when the mobile keyboard
-    // opens, so the layout keeps trying to fit inside a viewport that no
-    // longer matches the real visible area. h-dvh (dynamic viewport height)
-    // tracks the *actual* visible viewport, keyboard included.
-    //
-    // KEY FIX #2: flex-col with distinct top/middle/bottom regions instead of
-    // wrapping the entire page in items-center justify-center. Centering the
-    // whole page as a single block is what made the logo and input bar
-    // "float" into the wrong place once the visible height changed — the
-    // whole stack re-centers itself into whatever space is left. Pinning the
-    // header and input to shrink-0 and letting only the chat area flex means
-    // the keyboard only ever eats into the middle, scrollable region.
-    <div className="h-dvh w-screen flex flex-col items-center overflow-hidden">
+    <div
+      className="w-screen flex flex-col items-center overflow-hidden"
+      style={{ height: "100svh", paddingBottom: keyboardInset }}
+    >
       <div className="h-full w-[90%] sm:w-[75%] flex flex-col min-h-0">
         {/* --- HEADER (Logo) --- */}
         <div className="shrink-0 mt-5 flex justify-center">
-          <Image src="/Eclipso.svg" height={160} width={160} alt="Clipso logo" />
+          <Image src="/Eclipso.svg" height={160} width={160} alt="Clipso logo" priority />
         </div>
 
-        {/* --- CHAT AREA (only this region shrinks when keyboard opens) --- */}
-        <div className="flex-1 min-h-0 w-full overflow-y-auto sm:text-lg text-sm rounded-xl text-[color:var(--secondary)] my-2 scrollbar-hide">
+        {/* --- CHAT AREA --- */}
+        <div
+          ref={chatContainerRef}
+          className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain sm:text-lg text-sm rounded-xl text-[color:var(--secondary)] my-2 scrollbar-hide"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
           {messages.map((m, idx) => (
             <MessageBubble key={idx} role={m.role} content={m.content} />
           ))}
-          <div ref={chatEndRef} />
+          {loading && (
+            <div className="mb-3 flex justify-start">
+              <div className="inline-block px-4 py-3 rounded-xl text-[color:var(--secondary)] opacity-60 animate-pulse">
+                thinking…
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* --- INPUT SECTION (pinned, never gets pushed off-screen) --- */}
+        {/* --- INPUT SECTION --- */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -123,7 +167,8 @@ const Chatbot = () => {
               type="text"
               placeholder="What's on your mind?"
               aria-label="Chat message"
-              className="border-none outline-none w-[85%] sm:w-[90%] sm:text-lg text-sm bg-transparent"
+              disabled={loading}
+              className="border-none outline-none w-[85%] sm:w-[90%] sm:text-lg text-sm bg-transparent disabled:opacity-60"
             />
 
             <button
