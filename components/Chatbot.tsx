@@ -18,9 +18,6 @@ type ChatResponse = {
   error?: string;
 };
 
-// --- Markdown renderer for assistant messages ---
-// The API returns Markdown (**bold**, ### headings, numbered lists), so we
-// need to actually parse it instead of dumping the raw string in a <span>.
 function MarkdownContent({ content }: { content: string }) {
   return (
     <div className="prose prose-invert prose-sm sm:prose-base max-w-none prose-p:my-2 prose-headings:mt-4 prose-headings:mb-2 prose-headings:font-semibold prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-strong:text-[color:var(--secondary)] prose-headings:text-[color:var(--neon-purp)]">
@@ -46,27 +43,38 @@ function MessageBubble({ role, content }: Message) {
   );
 }
 
+// How close to the bottom (in px) counts as "still at the bottom"
+const BOTTOM_THRESHOLD = 80;
+
 const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Ref to the SCROLLABLE CONTAINER itself (not a dummy end element).
-  // We scroll this element directly via scrollTop so the browser never has
-  // a reason to move the whole page — that's what scrollIntoView was doing.
   const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Tracks whether the user is currently sitting at (or near) the bottom.
+  // Updated on every manual scroll so we know whether to auto-scroll later.
+  const stickToBottomRef = useRef(true);
+
+  const handleScroll = () => {
+    const el = chatContainerRef.current;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    stickToBottomRef.current = distanceFromBottom < BOTTOM_THRESHOLD;
+  };
 
   useEffect(() => {
     const el = chatContainerRef.current;
     if (!el) return;
-    el.scrollTop = el.scrollHeight;
+    // KEY FIX: only snap to bottom if the user was already there.
+    // If they've scrolled up to read earlier messages, leave them alone —
+    // new messages arriving shouldn't yank their scroll position.
+    if (stickToBottomRef.current) {
+      el.scrollTop = el.scrollHeight;
+    }
   }, [messages, loading]);
 
-  // KEY FIX: instead of relying purely on h-dvh (which recalculates on every
-  // frame of the browser's address-bar show/hide animation, causing visible
-  // jumps), we use the stable h-svh as a base and only adjust for the
-  // on-screen keyboard directly via the VisualViewport API. This is a single
-  // deliberate adjustment instead of a continuous recalculation.
   const [keyboardInset, setKeyboardInset] = useState(0);
 
   useEffect(() => {
@@ -89,6 +97,11 @@ const Chatbot = () => {
   const handleChat = async () => {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
+
+    // Sending a message should always snap back to bottom, even if the
+    // user had scrolled up — they just took an action that implies intent
+    // to see the new exchange.
+    stickToBottomRef.current = true;
 
     const newUserMsg: Message = { role: "user", content: trimmed };
     const updated = [...messages, newUserMsg];
@@ -137,6 +150,7 @@ const Chatbot = () => {
         {/* --- CHAT AREA --- */}
         <div
           ref={chatContainerRef}
+          onScroll={handleScroll}
           className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain sm:text-lg text-sm rounded-xl text-[color:var(--secondary)] my-2 scrollbar-hide"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
