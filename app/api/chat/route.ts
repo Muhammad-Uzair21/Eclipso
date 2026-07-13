@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Initialize Google Generative AI client with API key
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 
 type ChatMessage = {
@@ -11,10 +10,8 @@ type ChatMessage = {
 
 export async function POST(req: Request) {
   try {
-    // --- Parse incoming request ---
     const { messages }: { messages: ChatMessage[] } = await req.json();
 
-    // --- System Instructions / Persona Setup ---
     const context = `
       You are Eclipso, a friendly, helpful, and professional AI agent created by Muhammad Uzair.
       
@@ -27,7 +24,6 @@ export async function POST(req: Request) {
       6. Mention about Muhammad Uzair if and only if explicitly asked, otherwise focus on the user's query and never mention anything about him. Also mention tabs on their left side of the screen ( on big screens ), and on bottom left ( if on mobile screens ) they can use to navigate to Uzair's profile such as Github, Portfolio website, LinkdIn etc.
       `;
 
-    // --- Build prompt: combine context with conversation history ---
     const prompt =
       context +
       "\n\nConversation so far:\n" +
@@ -36,15 +32,12 @@ export async function POST(req: Request) {
     // --- Select Gemini model ---
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    // --- Generate AI response ---
     const result = await model.generateContent(prompt);
     const response = result.response.text();
 
-    // --- Return response to frontend ---
     return NextResponse.json({ response });
 
   } catch (error: unknown) {
-    // --- Error handling ---
     if (error instanceof Error) {
       return NextResponse.json(
         { error: error.message },
