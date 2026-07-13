@@ -43,7 +43,6 @@ function MessageBubble({ role, content }: Message) {
   );
 }
 
-// How close to the bottom (in px) counts as "still at the bottom"
 const BOTTOM_THRESHOLD = 80;
 
 const Chatbot = () => {
@@ -53,8 +52,6 @@ const Chatbot = () => {
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Tracks whether the user is currently sitting at (or near) the bottom.
-  // Updated on every manual scroll so we know whether to auto-scroll later.
   const stickToBottomRef = useRef(true);
 
   const handleScroll = () => {
@@ -67,9 +64,7 @@ const Chatbot = () => {
   useEffect(() => {
     const el = chatContainerRef.current;
     if (!el) return;
-    // KEY FIX: only snap to bottom if the user was already there.
-    // If they've scrolled up to read earlier messages, leave them alone —
-    // new messages arriving shouldn't yank their scroll position.
+    
     if (stickToBottomRef.current) {
       el.scrollTop = el.scrollHeight;
     }
@@ -98,9 +93,7 @@ const Chatbot = () => {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
 
-    // Sending a message should always snap back to bottom, even if the
-    // user had scrolled up — they just took an action that implies intent
-    // to see the new exchange.
+
     stickToBottomRef.current = true;
 
     const newUserMsg: Message = { role: "user", content: trimmed };
