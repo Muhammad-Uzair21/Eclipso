@@ -4,7 +4,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // Initialize Google Generative AI client with API key
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 
-// Define chat message type
 type ChatMessage = {
   role: "user" | "assistant" | "system";
   content: string;
